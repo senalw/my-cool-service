@@ -50,10 +50,16 @@ E.g.
 ![Screenshot 2024-04-09 at 08.30.45.png](..%2F..%2F..%2FDesktop%2FScreenshot%202024-04-09%20at%2008.30.45.png)
 
 ## Running App in minikube cluster
-* Use `deploy.sh` [here](./infra/deploy.sh) to deploy the application on a minicube cluster. 
+* Run `deploy.sh` [here](./infra/deploy.sh) to deploy the application on a minicube cluster. 
+* Three pods will be deployed, postgres, OPA, service respectively.
 * Then, it's possible to use [swagger-ui](http://localhost:8010/docs) to access the API.
 
 Note: Two dummy admin and non-admin users will be added to the database when deploying the app.
+
+| user     | username| password  |
+|----------|---------|-----------|
+| admin    | john    | 1234      |
+| non-admin| Senal   |Senal@1234 |
 
 ## Running App in a single docker container
 
