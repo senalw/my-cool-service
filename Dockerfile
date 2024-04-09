@@ -18,3 +18,6 @@ RUN make install
 
 COPY src ./src/
 COPY resources ./resources/
+COPY authz ./authz/
+
+ENTRYPOINT ["make", "run"]

@@ -1,1 +1,1 @@
-from .model import RoleModel, UserModel  # noqa F401
+from .model import UserModel  # noqa F401

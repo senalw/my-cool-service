@@ -7,12 +7,12 @@ from sqlalchemy.exc import DataError, IntegrityError, OperationalError, Programm
 from sqlalchemy.orm import Session, sessionmaker
 from src.config.config import Config
 from src.core.exception import (
-    MyCoolServiceError,
-    ConstraintViolationError,
+    AlreadyExistsError,
     DatabaseConnectionError,
     InvalidArgumentError,
+    MyCoolServiceError,
 )
-from src.domain.entity.base import Base
+from src.domain.model import Base
 
 
 class PostgresClient:
@@ -44,7 +44,7 @@ class PostgresClient:
         Base.metadata.create_all(self.db_engine)
 
     def insert_sample_data(self) -> None:
-        for table in ["products"]:
+        for table in ["user"]:
             with open(f"resources/sample_data/{table}.sql", "r") as sql_file:
                 with self.get_session() as session:
                     for statement in sql_file:
@@ -68,7 +68,7 @@ class PostgresClient:
         ):  # Programming error occurs when table not found
             raise DatabaseConnectionError("Unable to connect to the database")
         elif isinstance(throwable, IntegrityError):  # db constraint error
-            raise ConstraintViolationError("Unique key or Not null violation")
+            raise AlreadyExistsError("Unique key or Not null violation")
         else:
             raise MyCoolServiceError(
                 "Unknown Error", status.HTTP_500_INTERNAL_SERVER_ERROR

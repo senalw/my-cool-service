@@ -1,4 +1,4 @@
-version: '3'
+version: '1'
 services:
   app:
     build:
@@ -9,9 +9,10 @@ services:
     ports:
       - "8010:8010"
     environment:
-      - DB_URL=postgresql+psycopg2://user:password@db:5432/auto_cart
+      - DB_URL=postgresql+psycopg2://cool_service:"cool@123"@db:5432/my-cool-service
     depends_on:
       - db
+      - opa # Add OPA as a dependency for the app service
     command: >
       sh -c "sleep 10 && make run"
   db:
@@ -19,6 +20,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: cool_service
+      POSTGRES_PASSWORD: cool@123
       POSTGRES_DB: my-cool-service
+  opa:
+    image: openpolicyagent/opa:edge-rootless
+    ports:
+      - "8181:8181"
+    volumes:
+      - ./authz:/authz
+    command: ["run", "--server", "--log-level", "info", "--ignore=.*", "/authz"]

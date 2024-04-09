@@ -1,5 +1,5 @@
 from fastapi import status
-from src.core.exception import MyCoolServiceError
+from src.core.exception.my_cool_service_error import MyCoolServiceError
 
 
 class RequestValidationError(MyCoolServiceError):
