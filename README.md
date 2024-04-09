@@ -24,7 +24,7 @@ This app contains three endpoints,
 
 2. `POST -> /api/v1/user`
    * This endpoint is used to add new users to the system. Only admin users can add new users to the system.
-   * Sample payload,
+   * Sample request,
     ``` 
    curl -X 'POST' \
      'http://localhost:8010/api/v1/users' \
