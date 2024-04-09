@@ -61,7 +61,7 @@ E.g.
 
 ![swagger-ui.png](static%2Fswagger-ui.png)
 
-## Running App in minikube cluster
+## Running App in a minikube cluster
 * Run `deploy.sh` [here](./infra/deploy.sh) to deploy the application on a minicube cluster. 
 * Three pods will be deployed. i.e. postgres, OPA, and my-cool-service respectively.
 * Then, it's possible to use [swagger-ui](http://localhost:8010/docs) to access the API.
