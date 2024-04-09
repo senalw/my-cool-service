@@ -79,3 +79,7 @@ Point your browser to [http://localhost:8010/docs](http://localhost:8010/docs) t
 * Docker
 * kubectl
 * Terraform
+
+### Improvements 
+1. Implement TLS communication between service and Open Policy Agent.
+2. Implement unit tests to cover at least basic scenarios.
