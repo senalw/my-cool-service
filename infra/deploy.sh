@@ -40,6 +40,9 @@ echo "Minikube cluster started successfully (using Docker driver)!"
 # Change kubectl context to Minikube
 kubectl config use-context minikube
 
+# Load build my-cool-service:latest docker image
+minikube image load my-cool-service:latest
+
 # Initialize Terraform
 terraform init
 

@@ -9,19 +9,20 @@ services:
     ports:
       - "8010:8010"
     environment:
-      - DB_URL=postgresql+psycopg2://cool_service:"cool@123"@db:5432/my-cool-service
+      - DB_URL=postgresql+psycopg2://cool-user:cool123@db:5432/my-cool-service
+      - SECRET_KEY=t1g_nLtx?Pui(p&)R*_dM!UGs-qIb<5C
+      - OPA_URL=http://localhost:8181/v1/data/authz
+      - TOKEN_URL=http://localhost:8010/api/v1/auth/token
     depends_on:
       - db
       - opa # Add OPA as a dependency for the app service
-    command: >
-      sh -c "sleep 10 && make run"
   db:
     image: postgres:latest
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: cool_service
-      POSTGRES_PASSWORD: cool@123
+      POSTGRES_USER: cool-user
+      POSTGRES_PASSWORD: cool123
       POSTGRES_DB: my-cool-service
   opa:
     image: openpolicyagent/opa:edge-rootless
