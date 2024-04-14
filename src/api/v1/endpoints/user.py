@@ -14,16 +14,16 @@ router = APIRouter(prefix="/users")
 @inject
 async def create_user(
     request: AddUserInputSchema,
-    token=Depends(Container.OAuth2_password_bearer),  # noqa B008
+    token: str = Depends(Container.oauth2_password_bearer),  # noqa B008
     user_service: UserService = Depends(Provide[Container.user_service]),  # noqa B008
 ) -> GetUserOutputSchema:
-    user_service.create_user(request)
+    return user_service.create_user(request)
 
 
 @router.get("", status_code=status.HTTP_200_OK, response_model=ListUsersResponse)
 @inject
 async def get_users(
-    token=Depends(Container.OAuth2_password_bearer),  # noqa B008
+    token: str = Depends(Container.oauth2_password_bearer),  # noqa B008
     user_service: UserService = Depends(Provide[Container.user_service]),  # noqa B008
 ) -> ListUsersResponse:
     return user_service.get_users()

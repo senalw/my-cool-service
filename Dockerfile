@@ -19,5 +19,6 @@ RUN make install
 COPY src ./src/
 COPY resources ./resources/
 COPY authz ./authz/
+COPY certs ./certs/
 
 ENTRYPOINT ["make", "run"]

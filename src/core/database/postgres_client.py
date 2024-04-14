@@ -16,8 +16,8 @@ from src.domain.model import Base
 
 
 class PostgresClient:
-    def __init__(self, configs: Config.DatabaseConfig) -> None:
-        self.db_engine: Engine = create_engine(configs.db_url)
+    def __init__(self, configs: Config) -> None:
+        self.db_engine: Engine = create_engine(configs.db_configs.db_url)
 
     @contextmanager
     def get_session(self) -> Session:

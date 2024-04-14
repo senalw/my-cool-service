@@ -33,7 +33,8 @@ resource "kubernetes_secret" "client-secret" {
 resource "kubernetes_deployment" "my-cool-service" {
 
   depends_on = [
-    var.postgres_kubernetes_deployment
+    var.postgres_kubernetes_deployment,
+    var.opa_kubernetes_deployment
   ]
   metadata {
     namespace = var.namespace
@@ -71,7 +72,7 @@ resource "kubernetes_deployment" "my-cool-service" {
 
           env {
             name = "OPA_URL"
-            value = "http://${var.opa_address}/v1/data/authz"
+            value = "https://${var.opa_address}/v1/data/authz"
           }
 
           env {

@@ -26,6 +26,18 @@ resource "kubernetes_config_map" "opa-authz-policies" {
   }
 }
 
+resource "kubernetes_config_map" "opa-authz-certs" {
+  metadata {
+    namespace = var.namespace
+    name      = "${local.opa_name}-certs"
+  }
+
+  data = {
+    "private.key" = file("${path.cwd}/../certs/opa/private.key")
+    "public.crt" = file("${path.cwd}/../certs/opa/public.crt")
+  }
+}
+
 resource "kubernetes_deployment" "opa" {
   metadata {
     namespace = var.namespace
@@ -54,6 +66,14 @@ resource "kubernetes_deployment" "opa" {
           }
         }
 
+        volume {
+          name = "${local.opa_name}-certs"
+
+          config_map {
+            name = kubernetes_config_map.opa-authz-certs.metadata[0].name
+          }
+        }
+
         hostname = local.opa_name
 
         container {
@@ -67,13 +87,19 @@ resource "kubernetes_deployment" "opa" {
 
           # Mount local auth directory volume
           volume_mount {
-            name      = "${local.opa_name}-policies"
+            name       = "${local.opa_name}-policies"
             mount_path = "~/authz"
+          }
+
+          # Mount local certs/opa directory volume
+          volume_mount {
+            name        = "${local.opa_name}-certs"
+            mount_path  = "~/certs"
           }
 
           # OPA container arguments
           command = ["opa"]
-          args    = ["run", "--server", "--log-level", "info", "--ignore=.*", "~/authz"]
+          args    = ["run", "--server", "--log-level", "info", "--ignore=.*", "--tls-cert-file", "~/certs/public.crt", "--tls-private-key-file", "~/certs/private.key", "~/authz"]
         }
       }
     }
