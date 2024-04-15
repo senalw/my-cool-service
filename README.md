@@ -75,7 +75,12 @@ Note: Two dummy users (admin and non-admin) will be added to the database when d
 
 ## Running App in a single docker container
 
-1. Build the image,
+1. Generate certificates
+```shell
+cd infra && ./generate_certificates.sh
+```
+
+2. Build the image,
 ```shell
 docker compose build
 ```

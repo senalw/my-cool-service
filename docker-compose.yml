@@ -30,5 +30,5 @@ services:
       - "8181:8181"
     volumes:
       - ./authz:/authz
-      - ./certs/opa:/certs
+      - ./certs/opa:/certs:ro
     command: ["run", "--server", "--log-level", "info", "--ignore=.*", "--tls-cert-file", "/certs/public.crt", "--tls-private-key-file", "/certs/private.key", "/authz"]
