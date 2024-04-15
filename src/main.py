@@ -10,6 +10,9 @@ from src.core.exception import AuthenticationError, AuthorizationError
 from src.util.singleton import singleton
 from starlette.middleware.cors import CORSMiddleware
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 @singleton
 class AppCreator:
@@ -62,7 +65,6 @@ class AppCreator:
             try:
                 # Call the auth interceptor to handle OPA authorization
                 await self.auth_interceptor.intercept(request)
-                logging.info(f"{request} is authorized")
             except (AuthenticationError, AuthorizationError) as e:
                 return JSONResponse({"error": str(e)}, status_code=e.status_code)
 

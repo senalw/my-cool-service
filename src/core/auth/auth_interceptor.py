@@ -69,6 +69,7 @@ class AuthInterceptor:
 
             if not decision:
                 raise AuthorizationError("Access Denied")
+            logging.info(f"{request.method} request is authorized")
 
     @inject
     def authenticate_user(

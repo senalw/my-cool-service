@@ -1,3 +1,5 @@
+import logging
+
 from dependency_injector.wiring import inject
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
@@ -18,4 +20,5 @@ async def sign_in(
         "is_admin": user.is_admin,
     }
     access_token = create_access_token(subject=subject)
+    logging.info(f"{form_data.username} logged in")
     return {"access_token": access_token, "token_type": "bearer"}
