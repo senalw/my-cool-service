@@ -97,6 +97,5 @@ Point your browser to [http://localhost:8010/docs](http://localhost:8010/docs) t
 * kubectl
 * Terraform
 
-### Improvements 
-1. Implement TLS communication between the my-cool-service and the Open Policy Agent.
-2. Implement unit tests to cover at least basic scenarios.
+### Improvements
+1. Implement unit tests to cover at least basic scenarios.
