@@ -6,7 +6,7 @@ from src.core.auth.security import authenticate_user, create_access_token
 router = APIRouter(prefix="/auth")
 
 
-@router.options("/token")
+@router.post("/token")
 @inject
 async def sign_in(
     form_data: OAuth2PasswordRequestForm = Depends(),  # noqa B008
