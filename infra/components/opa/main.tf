@@ -89,12 +89,14 @@ resource "kubernetes_deployment" "opa" {
           volume_mount {
             name       = "${local.opa_name}-policies"
             mount_path = "~/authz"
+            read_only  = true
           }
 
           # Mount local certs/opa directory volume
           volume_mount {
             name        = "${local.opa_name}-certs"
             mount_path  = "~/certs"
+            read_only   = true
           }
 
           # OPA container arguments
