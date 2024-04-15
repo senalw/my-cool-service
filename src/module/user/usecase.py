@@ -2,7 +2,6 @@ from typing import List
 
 from src.core import UseCase
 from src.core.exception import InvalidArgumentError
-from src.domain import UserModel
 from src.domain.user_dto import UserDomain
 from src.module.user import UserRepository
 from src.module.user.mapper import UserMapper
@@ -20,9 +19,8 @@ class CreateUserUseCase(UseCase):
         if not request.password:
             raise InvalidArgumentError("Password can't be empty")
 
-        user_model: UserModel = UserMapper.to_persistent(request)
-        self.user_repo.add_user(user_model)
-        return GetUserOutputSchema(username=user_model.username, email=user_model.email)
+        user: UserDomain = self.user_repo.add_user(UserMapper.to_persistent(request))
+        return GetUserOutputSchema(username=user.username, email=user.email)
 
 
 class ListUsersUseCase(UseCase):

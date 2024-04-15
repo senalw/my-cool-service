@@ -14,6 +14,16 @@ check_command docker
 check_command kubectl
 check_command terraform
 
+# Create directory for certificates
+mkdir -p ../certs/opa
+
+# Generate certificates
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout ../certs/opa/private.key \
+    -out ../certs/opa/public.crt \
+    -subj "/CN=localhost" \
+    -addext "subjectAltName = DNS:localhost"
+
 # Build Docker image
 cd ../ && docker build -t my-cool-service:latest -f Dockerfile . && cd infra
 

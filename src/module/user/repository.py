@@ -9,7 +9,7 @@ from src.module.user.mapper import UserMapper
 
 class UserRepository(ABC):
     @abstractmethod
-    def add_user(self, user: UserModel) -> None:
+    def add_user(self, user: UserModel) -> UserDomain:
         raise NotImplementedError
 
     @abstractmethod
@@ -25,9 +25,10 @@ class UserRepositoryImpl(UserRepository):
     def __init__(self, db: PostgresClient) -> None:
         self.db: PostgresClient = db
 
-    def add_user(self, user: UserModel) -> None:
+    def add_user(self, user: UserModel) -> UserDomain:
         with self.db.get_session() as session:
             session.add(user)
+            return UserMapper.to_domain(user)
 
     def get_user_by_id(self, user_name: str) -> Optional[UserDomain]:
         with self.db.get_session() as session:
