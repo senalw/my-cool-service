@@ -10,7 +10,11 @@ from src.core.exception import AuthenticationError, AuthorizationError
 from src.util.singleton import singleton
 from starlette.middleware.cors import CORSMiddleware
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s.%(msecs)03d - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
