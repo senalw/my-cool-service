@@ -97,5 +97,21 @@ Point your browser to [http://localhost:8010/docs](http://localhost:8010/docs) t
 * kubectl
 * Terraform
 
+### Security Best Practices Followed
+* Store only hashed passwords in the database. 
+* Always generate random passwords/secrets in terraform when deploying applications
+* Secrets are not hard-coded in config files or source code.
+* Input field validations. E.g email, password (validate password strength)
+* Running service docker container as non-root user to limit the potential damage in case of security breach.
+* Enable encrypted communication between my-cool-service and the Open Policy Agent. (HTTPS)
+* When sign-in, JWT token validity period is set to 20 mins. (Configurable in config file [here](./resources/config.ini))
+* Logging all authentication and authorization requests.
+* Only admin users can add users to the system.
+* Use OPA for authorization.
+
 ### Improvements
 1. Implement unit tests to cover at least basic scenarios.
+2. Use secret management solution like AWS Secret Manager or HashiCorp Vault.
+3. Enable encryption in my-cool-service. (HTTPS)
+4. Implement RBAC (Role Based Access Control) in the K8S cluster.
+5. Scan codebase from static code analysis tool to find security issues. E.g. Snyc code
