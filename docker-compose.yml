@@ -28,7 +28,10 @@ services:
     image: openpolicyagent/opa:edge-rootless
     ports:
       - "8181:8181"
+    environment:
+      - SECRET_KEY=t1g_nLtx?Pui(p&)R*_dM!UGs-qIb<5C
     volumes:
       - ./authz:/authz
       - ./certs/opa:/certs:ro
-    command: ["run", "--server", "--log-level", "info", "--ignore=.*", "--tls-cert-file", "/certs/public.crt", "--tls-private-key-file", "/certs/private.key", "/authz"]
+    command: ["run", "--server", "--log-level", "info", "--ignore=.*", "--tls-cert-file", "/certs/public.crt",
+              "--tls-private-key-file", "/certs/private.key", "/authz"]

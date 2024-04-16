@@ -39,6 +39,13 @@ class AuthInterceptor:
             if not token:
                 raise AuthenticationError("Authentication token is missing")
 
+            match = re.match(r"^Bearer\s+(.*)$", token)
+            token = (
+                match.group(1)  # remove "Bearer" prefix from the token if exists.
+                if match
+                else token
+            )
+
             self.authenticate_user(token)  # validate token
 
             # Construct request object for OPA
@@ -80,11 +87,8 @@ class AuthInterceptor:
         ),
     ) -> None:
         try:
-            match = re.match(r"^Bearer\s+(.*)$", token)
             decoded_token = jwt.decode(
-                token=match.group(1)
-                if match
-                else token,  # remove "Bearer" prefix from the token if exists
+                token=token,
                 key=self.configs.secret_key,
                 algorithms=self.configs.algorithm,
             )
