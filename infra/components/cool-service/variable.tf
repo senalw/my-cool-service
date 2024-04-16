@@ -37,3 +37,7 @@ variable "postgres_kubernetes_deployment" {
 variable "opa_kubernetes_deployment" {
   description = "Name of the postgres k8s deployment"
 }
+
+variable "client_secret" {
+  description = "Client secret for OPA token decode"
+}

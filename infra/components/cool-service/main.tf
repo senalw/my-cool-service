@@ -15,20 +15,6 @@ locals {
   service_port = 8010
 }
 
-resource "random_password" "client-secret" {
-  length = 16
-}
-
-resource "kubernetes_secret" "client-secret" {
-  metadata {
-    namespace = var.namespace
-    name      = local.service_name
-  }
-
-  data = {
-    client-secret = random_password.client-secret.result
-  }
-}
 
 resource "kubernetes_deployment" "my-cool-service" {
 
@@ -79,7 +65,7 @@ resource "kubernetes_deployment" "my-cool-service" {
             name = "SECRET_KEY"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.client-secret.metadata[0].name
+                name = var.client_secret
                 key  = "client-secret"
               }
             }

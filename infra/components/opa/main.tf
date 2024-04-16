@@ -15,6 +15,21 @@ locals {
   opa_port = 8181
 }
 
+resource "random_password" "client-secret" {
+  length = 16
+}
+
+resource "kubernetes_secret" "client-secret" {
+  metadata {
+    namespace = var.namespace
+    name      = local.opa_name
+  }
+
+  data = {
+    client-secret = random_password.client-secret.result
+  }
+}
+
 resource "kubernetes_config_map" "opa-authz-policies" {
   metadata {
     namespace = var.namespace
@@ -97,6 +112,16 @@ resource "kubernetes_deployment" "opa" {
             name        = "${local.opa_name}-certs"
             mount_path  = "~/certs"
             read_only   = true
+          }
+
+          env {
+            name = "SECRET_KEY"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.client-secret.metadata[0].name
+                key  = "client-secret"
+              }
+            }
           }
 
           # OPA container arguments
