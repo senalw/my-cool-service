@@ -75,6 +75,7 @@ class AuthInterceptor:
             decision = opa_response.json().get("result", {}).get("allow", False)
 
             if not decision:
+                logging.error(f"{request.method} request is unauthorized")
                 raise AuthorizationError("Access Denied")
             logging.info(f"{request.method} request is authorized")
 
