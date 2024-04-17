@@ -2,15 +2,22 @@
 
 set -e  # Exit immediately if a command fails
 
-# Create directory for certificates
-mkdir -p ../certs/opa
-echo "Created certs directory"
+generate_certificates() {
+    local dir="$1"
 
-# Generate certificates
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout ../certs/opa/private.key \
-    -out ../certs/opa/public.crt \
-    -subj "/CN=localhost" \
-    -addext "subjectAltName = DNS:localhost"
+    # Create directory for certificates
+    mkdir -p "../certs/$dir"
+    echo "Created certs/$dir directory"
 
-echo "Generated certificates"
+    # Generate certificates
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout "../certs/$dir/private.key" \
+        -out "../certs/$dir/public.crt" \
+        -subj "/CN=localhost" \
+        -addext "subjectAltName = DNS:localhost"
+
+    echo "Generated $dir certificates"
+}
+
+generate_certificates "opa" # generate certificates for OPA
+generate_certificates "service" # generate certificates for service

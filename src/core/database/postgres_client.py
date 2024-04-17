@@ -2,6 +2,7 @@ import logging
 from contextlib import contextmanager
 
 from fastapi import status
+from settings import ROOT_DIR
 from sqlalchemy import create_engine, Engine, text
 from sqlalchemy.exc import DataError, IntegrityError, OperationalError, ProgrammingError
 from sqlalchemy.orm import Session, sessionmaker
@@ -45,7 +46,7 @@ class PostgresClient:
 
     def insert_sample_data(self) -> None:
         for table in ["user"]:
-            with open(f"resources/sample_data/{table}.sql", "r") as sql_file:
+            with open(f"{ROOT_DIR}/resources/sample_data/{table}.sql", "r") as sql_file:
                 with self.get_session() as session:
                     for statement in sql_file:
                         session.execute(text(statement))

@@ -53,7 +53,7 @@ resource "kubernetes_deployment" "my-cool-service" {
 
           env{
             name = "TOKEN_URL"
-            value = "http://localhost:${local.service_port}/api/v1/auth/token"
+            value = "https://localhost:${local.service_port}/api/v1/auth/token"
           }
 
           env {

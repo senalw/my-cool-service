@@ -12,7 +12,7 @@ services:
       - DB_URL=postgresql+psycopg2://cool-user:cool123@db:5432/my-cool-service
       - SECRET_KEY=t1g_nLtx?Pui(p&)R*_dM!UGs-qIb<5C
       - OPA_URL=https://localhost:8181/v1/data/authz
-      - TOKEN_URL=http://localhost:8010/api/v1/auth/token
+      - TOKEN_URL=https://localhost:8010/api/v1/auth/token
     depends_on:
       - db
       - opa # Add OPA as a dependency for the app service

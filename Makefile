@@ -48,4 +48,4 @@ lint:
 setup-dev: setup setup-test setup-style
 
 run:
-	PYTHONPATH=./src: ./venv/bin/uvicorn src.main:app --reload --host 0.0.0.0 --port 8010
+	PYTHONPATH=./src: ./venv/bin/python src/main.py
