@@ -69,7 +69,7 @@ class PostgresClient:
         ):  # Programming error occurs when table not found
             raise DatabaseConnectionError("Unable to connect to the database")
         elif isinstance(throwable, IntegrityError):  # db constraint error
-            raise AlreadyExistsError("Unique key or Not null violation")
+            raise AlreadyExistsError("Resource already exists")
         else:
             raise MyCoolServiceError(
                 "Unknown Error", status.HTTP_500_INTERNAL_SERVER_ERROR
