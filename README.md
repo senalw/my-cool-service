@@ -93,6 +93,19 @@ docker compose up
 
 Point your browser to [https://localhost:8010/docs](http://localhost:8010/docs) to access swagger UI.
 
+### OPA Integration
+Here's the OPA integration architecture,
+
+![OPA architecture.png](static%2FOPA%20architecture.png)
+#### How it works?
+1. Each request that comes with url `api/v1/users` will be route through auth interceptor middleware.
+2. It sends a post request to Open Policy Agent via https protocol. 
+3. This JSON data will be evaluated against the Rego policies defined in the OPA.
+4. Then OPA sends evaluated decision to the service as a response. 
+5. Service checks the decision of OPA and proceed the request if it's authorized.
+
+Reference: https://cloudnativenow.com/features/introduction-to-open-policy-agent-opa/
+
 ### System Requirements
 * Docker
 * kubectl
