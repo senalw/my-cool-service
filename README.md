@@ -94,6 +94,8 @@ docker compose up
 Point your browser to [https://localhost:8010/docs](http://localhost:8010/docs) to access swagger UI.
 
 ### OPA Integration
+OPA provides an open-source unified solution for authorization across the cloud native stack and it decouples authorization logic from the application.
+
 Here's the OPA integration architecture,
 
 ![OPA architecture.png](static%2FOPA%20architecture.png)
@@ -127,5 +129,4 @@ Reference: https://cloudnativenow.com/features/introduction-to-open-policy-agent
 ### Improvements
 1. Implement unit tests to cover at least basic scenarios.
 2. Use secret management solution like AWS Secret Manager or HashiCorp Vault to store secrets.
-3. Implement RBAC (Role Based Access Control) in the K8S cluster.
-4. Scan codebase from static code analysis tool to find security issues. E.g. Snyc code
+3. Scan codebase from static code analysis tool to find security issues. E.g. Snyc code
