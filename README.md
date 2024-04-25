@@ -4,10 +4,10 @@ Overview
 ---------
 This API has below user stories implemented from FastAPI:
 
+* As a user, I want to get Json Web Token (JWT) for authentication.
 * As an authenticated user, I want to list all the users existing in the system.
 * As an admin user, I want to add users to the system.
 * Non-admin users should be able to add users to the system.
-* As a user, I want to get Json Web Token (JWT) for authentication.
 
 This app contains three endpoints,
 1. `POST -> /api/v1/auth/token`

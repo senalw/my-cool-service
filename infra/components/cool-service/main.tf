@@ -74,6 +74,26 @@ resource "kubernetes_deployment" "my-cool-service" {
           port {
             container_port = local.service_port
           }
+
+          liveness_probe {
+            http_get {
+              path   = "/healthz"
+              port   = local.service_port
+              scheme = "HTTPS"
+            }
+            initial_delay_seconds = 15
+            period_seconds        = 30
+          }
+
+          readiness_probe {
+            http_get {
+              path   = "/healthz"
+              port   = local.service_port
+              scheme = "HTTPS"
+            }
+            initial_delay_seconds = 15
+            period_seconds        = 30
+          }
         }
       }
     }

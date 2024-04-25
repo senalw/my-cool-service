@@ -10,6 +10,7 @@ from src.core.auth.auth_interceptor import AuthInterceptor
 from src.core.container import Container
 from src.core.exception import AuthenticationError, AuthorizationError
 from src.util.singleton import singleton
+from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 
 logging.basicConfig(
@@ -67,6 +68,10 @@ class AppCreator:
         @self.app.get("/openapi.json", include_in_schema=False)
         async def get_openapi() -> Dict[str, Any]:
             return self.app.openapi()
+
+        @self.app.get("/healthz", status_code=status.HTTP_200_OK)
+        async def health_check() -> dict:
+            return {"status": "ok"}
 
         @self.app.middleware("https")
         async def opa_authorization(request: Request, call_next: Any) -> Any:
