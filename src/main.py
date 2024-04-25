@@ -79,8 +79,10 @@ class AppCreator:
                 # Call the auth interceptor to handle OPA authorization
                 await self.auth_interceptor.intercept(request)
             except (AuthenticationError, AuthorizationError) as e:
+                logging.error(f"{request.method} request is unauthorized")
                 return JSONResponse({"error": str(e)}, status_code=e.status_code)
 
+            logging.info(f"{request.method} request is authorized")
             # Access granted, allow request to proceed to the endpoint
             response = await call_next(request)
             return response

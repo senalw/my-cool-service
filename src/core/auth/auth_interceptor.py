@@ -75,9 +75,7 @@ class AuthInterceptor:
             decision = opa_response.json().get("result", {}).get("allow", False)
 
             if not decision:
-                logging.error(f"{request.method} request is unauthorized")
                 raise AuthorizationError("Access Denied")
-            logging.info(f"{request.method} request is authorized")
 
     @inject
     def authenticate_user(
@@ -96,7 +94,10 @@ class AuthInterceptor:
             # Check whether the user is actually exists in the database to stop accessibility of deleted users during token validation period. # noqa E501
             username: Optional[str] = decoded_token.get("username", None)
             if not user_repo.get_user_by_id(username):
+                logging.error(f"{username} is not authenticated")
                 raise AuthenticationError(f"Unable to access for the user {username}")
+
+            logging.info(f"{username} is authenticated")
         except (JWTError, ExpiredSignatureError, JWTClaimsError) as e:
             logging.exception("JWT token authentication failed", e)
             raise AuthenticationError("JWT token authentication failed")
