@@ -14,6 +14,9 @@ check_command docker
 check_command kubectl
 check_command terraform
 
+# Generate certificates
+./generate_certificates.sh
+
 # Build Docker image
 cd ../ && docker build -t my-cool-service:latest -f Dockerfile . && cd infra
 
@@ -56,4 +59,4 @@ echo "Cluster created successfully"
 kubectl port-forward service/swisscom-cool-service 8010:8010 &
 
 # Log port forwarding information
-echo "Port forwarding set up. Access your service at http://localhost:8010/docs"
+echo "Port forwarding set up. Access your service at https://localhost:8010/docs"

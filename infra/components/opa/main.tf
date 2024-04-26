@@ -15,6 +15,21 @@ locals {
   opa_port = 8181
 }
 
+resource "random_password" "client-secret" {
+  length = 16
+}
+
+resource "kubernetes_secret" "client-secret" {
+  metadata {
+    namespace = var.namespace
+    name      = local.opa_name
+  }
+
+  data = {
+    client-secret = random_password.client-secret.result
+  }
+}
+
 resource "kubernetes_config_map" "opa-authz-policies" {
   metadata {
     namespace = var.namespace
@@ -23,6 +38,18 @@ resource "kubernetes_config_map" "opa-authz-policies" {
 
   data = {
     "authz.rego" = file("${path.cwd}/../authz/authz.rego")
+  }
+}
+
+resource "kubernetes_config_map" "opa-authz-certs" {
+  metadata {
+    namespace = var.namespace
+    name      = "${local.opa_name}-certs"
+  }
+
+  data = {
+    "private.key" = file("${path.cwd}/../certs/opa/private.key")
+    "public.crt" = file("${path.cwd}/../certs/opa/public.crt")
   }
 }
 
@@ -54,6 +81,14 @@ resource "kubernetes_deployment" "opa" {
           }
         }
 
+        volume {
+          name = "${local.opa_name}-certs"
+
+          config_map {
+            name = kubernetes_config_map.opa-authz-certs.metadata[0].name
+          }
+        }
+
         hostname = local.opa_name
 
         container {
@@ -67,13 +102,31 @@ resource "kubernetes_deployment" "opa" {
 
           # Mount local auth directory volume
           volume_mount {
-            name      = "${local.opa_name}-policies"
+            name       = "${local.opa_name}-policies"
             mount_path = "~/authz"
+            read_only  = true
+          }
+
+          # Mount local certs/opa directory volume
+          volume_mount {
+            name        = "${local.opa_name}-certs"
+            mount_path  = "~/certs"
+            read_only   = true
+          }
+
+          env {
+            name = "SECRET_KEY"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.client-secret.metadata[0].name
+                key  = "client-secret"
+              }
+            }
           }
 
           # OPA container arguments
           command = ["opa"]
-          args    = ["run", "--server", "--log-level", "info", "--ignore=.*", "~/authz"]
+          args    = ["run", "--server", "--log-level", "info", "--ignore=.*", "--tls-cert-file", "~/certs/public.crt", "--tls-private-key-file", "~/certs/private.key", "~/authz"]
         }
       }
     }

@@ -13,3 +13,7 @@ output "postgres_kubernetes_deployment" {
 output "opa_kubernetes_deployment" {
   value = module.opa.opa_kubernetes_deployment
 }
+
+output "client_secret" {
+  value = module.opa.client_secret
+}

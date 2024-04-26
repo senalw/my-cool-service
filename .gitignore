@@ -131,3 +131,8 @@ dmypy.json
 .idea/
 
 junit.xml
+
+# Certificates
+certs/
+*.crt
+*.key

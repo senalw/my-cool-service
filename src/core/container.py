@@ -16,9 +16,9 @@ class Container(containers.DeclarativeContainer):
     )
 
     configs = providers.Singleton(Config)
-    db = providers.Singleton(PostgresClient, configs=configs().db_configs)
+    db = providers.Singleton(PostgresClient, configs=configs)
     user_repository = providers.Factory(UserRepositoryImpl, db=db)
     user_service = providers.Factory(UserService, user_repository=user_repository)
-    OAuth2_password_bearer = OAuth2PasswordBearer(
+    oauth2_password_bearer = OAuth2PasswordBearer(
         tokenUrl=configs().security_config.token_url
     )

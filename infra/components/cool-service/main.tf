@@ -15,25 +15,12 @@ locals {
   service_port = 8010
 }
 
-resource "random_password" "client-secret" {
-  length = 16
-}
-
-resource "kubernetes_secret" "client-secret" {
-  metadata {
-    namespace = var.namespace
-    name      = local.service_name
-  }
-
-  data = {
-    client-secret = random_password.client-secret.result
-  }
-}
 
 resource "kubernetes_deployment" "my-cool-service" {
 
   depends_on = [
-    var.postgres_kubernetes_deployment
+    var.postgres_kubernetes_deployment,
+    var.opa_kubernetes_deployment
   ]
   metadata {
     namespace = var.namespace
@@ -66,19 +53,19 @@ resource "kubernetes_deployment" "my-cool-service" {
 
           env{
             name = "TOKEN_URL"
-            value = "http://localhost:${local.service_port}/api/v1/auth/token"
+            value = "https://localhost:${local.service_port}/api/v1/auth/token"
           }
 
           env {
             name = "OPA_URL"
-            value = "http://${var.opa_address}/v1/data/authz"
+            value = "https://${var.opa_address}/v1/data/authz"
           }
 
           env {
             name = "SECRET_KEY"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.client-secret.metadata[0].name
+                name = var.client_secret
                 key  = "client-secret"
               }
             }
@@ -86,6 +73,26 @@ resource "kubernetes_deployment" "my-cool-service" {
 
           port {
             container_port = local.service_port
+          }
+
+          liveness_probe {
+            http_get {
+              path   = "/healthz"
+              port   = local.service_port
+              scheme = "HTTPS"
+            }
+            initial_delay_seconds = 15
+            period_seconds        = 30
+          }
+
+          readiness_probe {
+            http_get {
+              path   = "/healthz"
+              port   = local.service_port
+              scheme = "HTTPS"
+            }
+            initial_delay_seconds = 15
+            period_seconds        = 30
           }
         }
       }

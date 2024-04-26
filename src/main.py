@@ -1,14 +1,24 @@
 import logging
 from typing import Any, Dict
 
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from settings import ROOT_DIR
 from src.api.v1.routes import routers as v1_routers
 from src.core.auth.auth_interceptor import AuthInterceptor
 from src.core.container import Container
 from src.core.exception import AuthenticationError, AuthorizationError
 from src.util.singleton import singleton
+from starlette import status
 from starlette.middleware.cors import CORSMiddleware
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s.%(msecs)03d - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -20,18 +30,21 @@ class AppCreator:
         self.db = self.container.db()
         self.config = self.container.configs()
         self.auth_interceptor = AuthInterceptor(self.config.security_config)
+        self.ssl_certificate = f"{ROOT_DIR}/certs/service/public.crt"
+        self.ssl_private_key = f"{ROOT_DIR}/certs/service/private.key"
 
         # set app default
         self.app = FastAPI(
-            title=self.config.project_config.name,
-            openapi_url=f"{self.config.project_config.api}/openapi.json",
-            version=self.config.project_config.version,
+            title=self.config.app_config.name,
+            openapi_url=f"{self.config.app_config.api}/openapi.json",
+            version=self.config.app_config.version,
             swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"},
         )
 
         # CORS middleware for handling cross-origin requests
         self.app.add_middleware(
             CORSMiddleware,
+            # allow_origins=["https://localhost:8010"],
             allow_origins=["*"],  # Allow requests from any origin.
             allow_credentials=True,
             allow_methods=["GET", "POST", "PUT", "DELETE"],
@@ -57,13 +70,17 @@ class AppCreator:
         async def get_openapi() -> Dict[str, Any]:
             return self.app.openapi()
 
-        @self.app.middleware("http")
+        @self.app.get("/healthz", status_code=status.HTTP_200_OK)
+        async def health_check() -> dict:
+            return {"status": "ok"}
+
+        @self.app.middleware("https")
         async def opa_authorization(request: Request, call_next: Any) -> Any:
             try:
                 # Call the auth interceptor to handle OPA authorization
                 await self.auth_interceptor.intercept(request)
-                logging.info(f"{request} is authorized")
             except (AuthenticationError, AuthorizationError) as e:
+                logging.error(f"{request.method} request is unauthorized")
                 return JSONResponse({"error": str(e)}, status_code=e.status_code)
 
             # Access granted, allow request to proceed to the endpoint
@@ -73,8 +90,14 @@ class AppCreator:
         self.app.include_router(v1_routers, prefix="/api/v1")
 
 
-app_creator = AppCreator()
-app = app_creator.app
-db = app_creator.db
-conf = app_creator.config
-container = app_creator.container
+if __name__ == "__main__":
+    app_creator = AppCreator()
+    app = app_creator.app
+    conf = app_creator.config
+    uvicorn.run(
+        app,
+        host="0.0.0.0",  # noqa S104
+        port=conf.app_config.port,
+        ssl_certfile=app_creator.ssl_certificate,
+        ssl_keyfile=app_creator.ssl_private_key,
+    )

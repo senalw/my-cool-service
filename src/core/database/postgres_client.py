@@ -2,6 +2,7 @@ import logging
 from contextlib import contextmanager
 
 from fastapi import status
+from settings import ROOT_DIR
 from sqlalchemy import create_engine, Engine, text
 from sqlalchemy.exc import DataError, IntegrityError, OperationalError, ProgrammingError
 from sqlalchemy.orm import Session, sessionmaker
@@ -16,8 +17,8 @@ from src.domain.model import Base
 
 
 class PostgresClient:
-    def __init__(self, configs: Config.DatabaseConfig) -> None:
-        self.db_engine: Engine = create_engine(configs.db_url)
+    def __init__(self, configs: Config) -> None:
+        self.db_engine: Engine = create_engine(configs.db_configs.db_url)
 
     @contextmanager
     def get_session(self) -> Session:
@@ -45,7 +46,7 @@ class PostgresClient:
 
     def insert_sample_data(self) -> None:
         for table in ["user"]:
-            with open(f"resources/sample_data/{table}.sql", "r") as sql_file:
+            with open(f"{ROOT_DIR}/resources/sample_data/{table}.sql", "r") as sql_file:
                 with self.get_session() as session:
                     for statement in sql_file:
                         session.execute(text(statement))
@@ -68,7 +69,7 @@ class PostgresClient:
         ):  # Programming error occurs when table not found
             raise DatabaseConnectionError("Unable to connect to the database")
         elif isinstance(throwable, IntegrityError):  # db constraint error
-            raise AlreadyExistsError("Unique key or Not null violation")
+            raise AlreadyExistsError("Resource already exists")
         else:
             raise MyCoolServiceError(
                 "Unknown Error", status.HTTP_500_INTERNAL_SERVER_ERROR

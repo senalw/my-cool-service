@@ -32,6 +32,7 @@ module "cool-service" {
   postgres_password              = module.postgres.postgres_password
   postgres_kubernetes_deployment = module.postgres.postgres_kubernetes_deployment
   opa_kubernetes_deployment      = module.opa.opa_kubernetes_deployment
+  client_secret                  = module.opa.client_secret
 
   postgres_db   = var.postgres_db
   postgres_user = var.postgres_user
