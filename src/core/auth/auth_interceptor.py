@@ -13,6 +13,7 @@ from settings import ROOT_DIR
 from src.config.config import Config
 from src.core.container import Container
 from src.core.exception import AuthenticationError, AuthorizationError
+from src.domain.user_dto import UserDomain
 from src.module.user import UserRepository
 from src.util.utils import is_self_signed
 from starlette.requests import Request
@@ -76,6 +77,7 @@ class AuthInterceptor:
 
             if not decision:
                 raise AuthorizationError("Access Denied")
+            logging.info(f"{request.method} request is authorized")
 
     @inject
     def authenticate_user(
@@ -93,7 +95,8 @@ class AuthInterceptor:
             )
             # Check whether the user is actually exists in the database to stop accessibility of deleted users during token validation period. # noqa E501
             username: Optional[str] = decoded_token.get("username", None)
-            if not user_repo.get_user_by_id(username):
+            user: Optional[UserDomain] = user_repo.get_user_by_id(username)
+            if not user or decoded_token.get("id", "") != user.user_id:
                 logging.error(f"{username} is not authenticated")
                 raise AuthenticationError(f"Unable to access for the user {username}")
 

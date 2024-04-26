@@ -44,6 +44,7 @@ class AppCreator:
         # CORS middleware for handling cross-origin requests
         self.app.add_middleware(
             CORSMiddleware,
+            # allow_origins=["https://localhost:8010"],
             allow_origins=["*"],  # Allow requests from any origin.
             allow_credentials=True,
             allow_methods=["GET", "POST", "PUT", "DELETE"],
@@ -82,7 +83,6 @@ class AppCreator:
                 logging.error(f"{request.method} request is unauthorized")
                 return JSONResponse({"error": str(e)}, status_code=e.status_code)
 
-            logging.info(f"{request.method} request is authorized")
             # Access granted, allow request to proceed to the endpoint
             response = await call_next(request)
             return response
