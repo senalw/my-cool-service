@@ -33,7 +33,7 @@ class AuthInterceptor:
             self.verify = f"{ROOT_DIR}/{self.configs.opa_public_key}"
 
     async def intercept(self, request: Request) -> None:
-        match = re.search(r"api/[^/]+/users", request.url.path)
+        match = re.search(r"^api/[^/]+/users", request.url.path)
         if match:  # do authorization only for the paths with "api/v*/user". # noqa E501
             # Extract authentication token from request headers
             token = request.headers.get("Authorization")
